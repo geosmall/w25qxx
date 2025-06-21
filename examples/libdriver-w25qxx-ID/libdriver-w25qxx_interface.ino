@@ -143,7 +143,7 @@ uint8_t spi_write_read(uint8_t *in_buf, uint32_t in_len, uint8_t *out_buf, uint3
         if (res != HAL_OK)
         {
             /* set cs high */
-            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
+            digitalWrite(CS_PIN, HIGH);
            
             return 1;
         }
@@ -157,7 +157,7 @@ uint8_t spi_write_read(uint8_t *in_buf, uint32_t in_len, uint8_t *out_buf, uint3
         if (res != HAL_OK)
         {
             /* set cs high */
-            HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
+            digitalWrite(CS_PIN, HIGH);
            
             return 1;
         }
