@@ -34,6 +34,13 @@ typedef enum {
     W25QXX_Timeout
 } W25QXX_err_t;
 
+W25QXX_err_t W25QXX_init(W25QXX_handle_t *w25qxx, w25qxx_type_t type);
+W25QXX_err_t W25QXX_deinit(W25QXX_handle_t *w25qxx);
+W25QXX_err_t W25QXX_read(W25QXX_handle_t *w25qxx, uint32_t address, uint8_t *buf, uint32_t len);
+W25QXX_err_t W25QXX_write(W25QXX_handle_t *w25qxx, uint32_t address, uint8_t *buf, uint32_t len);
+W25QXX_err_t W25QXX_erase(W25QXX_handle_t *w25qxx, uint32_t address, uint32_t len);
+W25QXX_err_t W25QXX_chip_erase(W25QXX_handle_t *w25qxx);
+
 #ifdef __cplusplus
 }
 #endif
