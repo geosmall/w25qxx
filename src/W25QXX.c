@@ -156,6 +156,11 @@ static uint8_t w25qxx_populate_info(W25QXX_handle_t *w25qxx)
     return W25QXX_Ok;
 }
 
+static inline uint32_t next_sector_boundary(uint32_t addr)
+{
+    return (addr + W25Q_SECTOR_SIZE_BYTES) & ~(W25Q_SECTOR_SIZE_BYTES - 1U);
+}
+
 /* --------------------End local helpers ------------------------ */
 
 W25QXX_err_t W25QXX_init(W25QXX_handle_t *w25qxx, w25qxx_type_t type)
@@ -220,9 +225,8 @@ W25QXX_err_t W25QXX_deinit(W25QXX_handle_t *w25qxx)
 {
     if (w25qxx_deinit(&w25qxx->w25qxx_hdl) != 0) {
         return W25QXX_Err;
-    } else {
-        return W25QXX_Ok;
     }
+    return W25QXX_Ok;
 }
 
 W25QXX_err_t W25QXX_read(W25QXX_handle_t *w25qxx, uint32_t address, uint8_t *buf, uint32_t len)
@@ -243,17 +247,31 @@ W25QXX_err_t W25QXX_write(W25QXX_handle_t *w25qxx, uint32_t address, uint8_t *bu
 
 W25QXX_err_t W25QXX_erase(W25QXX_handle_t *w25qxx, uint32_t address, uint32_t len)
 {
-    // Calculate number of 4K sectors to erase
-    uint32_t sectors = (len + W25Q_SECTOR_SIZE_BYTES - 1) / W25Q_SECTOR_SIZE_BYTES;
+    W25QXX_err_t rc;
 
-    for (uint32_t i = 0; i < sectors; i++) {
-        uint32_t sector_addr = address + (i * W25Q_SECTOR_SIZE_BYTES);
-        if (w25qxx_sector_erase_4k(&w25qxx->w25qxx_hdl, sector_addr) != 0) {
-            return W25QXX_Err;
-        }
+    uint32_t flash_bytes = w25qxx->chip_info.block_size * w25qxx->chip_info.block_count;
+
+    if (len == 0 || address >= flash_bytes || (flash_bytes - address) <  len) {
+        return W25QXX_Err;
     }
+
+    while (len) {
+        uint32_t sector_addr = address & ~(W25Q_SECTOR_SIZE_BYTES - 1U);
+
+        rc = w25qxx_sector_erase_4k(&w25qxx->w25qxx_hdl, sector_addr);
+        if (rc) return W25QXX_Err;                      /* abort on first error */
+
+        /* advance to next portion */
+        uint32_t bytes_erased = next_sector_boundary(address) - address;
+        if (bytes_erased > len) bytes_erased = len;     /* last partial sector */
+
+        address += bytes_erased;
+        len     -= bytes_erased;
+    }
+
     return W25QXX_Ok;
 }
+
 
 W25QXX_err_t W25QXX_chip_erase(W25QXX_handle_t *w25qxx)
 {
