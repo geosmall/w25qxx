@@ -10,7 +10,7 @@
 #include "src/printf/printf.h"
 
 #define LFS_CACHE_SIZE 256
-#define LFS_LOOKAHEAD_SIZE 512
+#define LFS_LOOKAHEAD_SIZE 128
 
 static int block_device_read(const struct lfs_config *c, lfs_block_t block,  lfs_off_t off, void *buffer, lfs_size_t size);
 static int block_device_prog(const struct lfs_config *c, lfs_block_t block, lfs_off_t off, const void *buffer, lfs_size_t size);
@@ -616,43 +616,28 @@ uint8_t FS_RunBenchmark(void)
     return ERR_OK;
 }
 
-// static uint8_t FS_PrintStatus(CLS1_ConstStdIOType *io) {
 uint8_t FS_PrintStatus(void)
 {
     uint8_t buf[24];
 
-    // CLS1_SendStatusStr((const unsigned char*)"FS", (const unsigned char*)"\r\n", io->stdOut);
-    // CLS1_SendStatusStr((const unsigned char*)"  mounted", FS_isMounted ? "yes\r\n" : "no\r\n", io->stdOut);
     printf_("FS mounted: %s\r\n", FS_isMounted ? "yes" : "no");
 
     UTIL1_Num32uToStr(buf, sizeof(buf), FS_cfg.block_count * FS_cfg.block_size);
-    // UTIL1_strcat(buf, sizeof(buf), " bytes\r\n");
-    // CLS1_SendStatusStr((const unsigned char*)"  space", buf, io->stdOut);
     printf_("FS space: %s bytes\r\n", buf);
 
     UTIL1_Num32uToStr(buf, sizeof(buf), FS_cfg.read_size);
-    // UTIL1_strcat(buf, sizeof(buf), "\r\n");
-    // CLS1_SendStatusStr((const unsigned char*)"  read_size", buf, io->stdOut);
     printf_("FS read_size: %s\r\n", buf);
 
     UTIL1_Num32uToStr(buf, sizeof(buf), FS_cfg.prog_size);
-    // UTIL1_strcat(buf, sizeof(buf), "\r\n");
-    // CLS1_SendStatusStr((const unsigned char*)"  prog_size", buf, io->stdOut);
     printf_("FS prog_size: %s\r\n", buf);
 
     UTIL1_Num32uToStr(buf, sizeof(buf), FS_cfg.block_size);
-    // UTIL1_strcat(buf, sizeof(buf), "\r\n");
-    // CLS1_SendStatusStr((const unsigned char*)"  block_size", buf, io->stdOut);
     printf_("FS block_size: %s\r\n", buf);
 
     UTIL1_Num32uToStr(buf, sizeof(buf), FS_cfg.block_count);
-    // UTIL1_strcat(buf, sizeof(buf), "\r\n");
-    // CLS1_SendStatusStr((const unsigned char*)"  block_count", buf, io->stdOut);
     printf_("FS block_count: %s\r\n", buf);
 
     UTIL1_Num32uToStr(buf, sizeof(buf), FS_cfg.lookahead_size);
-    // UTIL1_strcat(buf, sizeof(buf), "\r\n");
-    // CLS1_SendStatusStr((const unsigned char*)"  lookahead_size", buf, io->stdOut);
     printf_("FS lookahead_size: %s\r\n", buf);
 
     printf_("\r\n");
