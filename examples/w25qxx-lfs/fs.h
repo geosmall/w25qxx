@@ -20,7 +20,7 @@ extern "C" {
 
 // uint8_t FS_ParseCommand(const unsigned char* cmd, bool *handled, const CLS1_StdIOType *io);
 
-uint8_t FS_Init(W25QXX_handle_t *handle);
+uint8_t FS_Init(W25QXX_dev_hdl_t *handle);
 
 uint8_t FS_Format(void);
 

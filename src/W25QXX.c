@@ -22,7 +22,7 @@
  * @note   Uses w25qxx_get_sfdp() to read the 256-byte SFDP data.
  *         (JESD216 spec §6.4, 9 DWORDs).  Works with all Winbond W25Q parts
  */
-static uint8_t w25qxx_probe_geometry_sfdp(W25QXX_handle_t *w25qxx, uint32_t *flash_bytes, uint32_t *block_cnt)
+static uint8_t w25qxx_probe_geometry_sfdp(W25QXX_dev_hdl_t *w25qxx, uint32_t *flash_bytes, uint32_t *block_cnt)
 {
     uint8_t buf[256];
     uint8_t res = w25qxx_get_sfdp(&w25qxx->w25qxx_hdl, buf); /* 0x5A read */
@@ -85,7 +85,7 @@ static uint32_t fallback_block_count(uint16_t dev_id)
  * @param[out] *block_count number of 64KB blocks
  * @return status code: 0=success, non-zero=error
  */
-static uint8_t w25qxx_get_device_geometry(W25QXX_handle_t *w25qxx, uint32_t *flash_bytes, uint32_t *block_count)
+static uint8_t w25qxx_get_device_geometry(W25QXX_dev_hdl_t *w25qxx, uint32_t *flash_bytes, uint32_t *block_count)
 {
     uint8_t manufacturer_id, device_id;
 
@@ -112,12 +112,12 @@ static uint8_t w25qxx_get_device_geometry(W25QXX_handle_t *w25qxx, uint32_t *fla
 }
 
 /**
- * @brief  Fill a W25QXX_handle_t struct with live data from the flash.
+ * @brief  Fill a W25QXX_dev_hdl_t struct with live data from the flash.
  * @param[in]  *w25qxx pointer to W25QXX handle structure
  * @retval 0        Success
  * @retval non-zero Driver-level error (SPI fault, unsupported device, …)
  */
-static uint8_t w25qxx_populate_info(W25QXX_handle_t *w25qxx)
+static uint8_t w25qxx_populate_info(W25QXX_dev_hdl_t *w25qxx)
 {
     uint8_t manufacturer_id, device_id;
     uint8_t jedec_id[2];
@@ -163,7 +163,7 @@ static inline uint32_t next_sector_boundary(uint32_t addr)
 
 /* --------------------End local helpers ------------------------ */
 
-W25QXX_err_t W25QXX_init(W25QXX_handle_t *w25qxx, w25qxx_type_t type)
+W25QXX_err_t W25QXX_init(W25QXX_dev_hdl_t *w25qxx, w25qxx_type_t type)
 {
     DRIVER_W25QXX_LINK_INIT(&w25qxx->w25qxx_hdl, w25qxx_handle_t);
     DRIVER_W25QXX_LINK_SPI_QSPI_INIT(&w25qxx->w25qxx_hdl, w25qxx_interface_spi_qspi_init);
@@ -221,7 +221,7 @@ W25QXX_err_t W25QXX_init(W25QXX_handle_t *w25qxx, w25qxx_type_t type)
     }
 }
 
-W25QXX_err_t W25QXX_deinit(W25QXX_handle_t *w25qxx)
+W25QXX_err_t W25QXX_deinit(W25QXX_dev_hdl_t *w25qxx)
 {
     if (w25qxx_deinit(&w25qxx->w25qxx_hdl) != 0) {
         return W25QXX_Err;
@@ -229,7 +229,7 @@ W25QXX_err_t W25QXX_deinit(W25QXX_handle_t *w25qxx)
     return W25QXX_Ok;
 }
 
-W25QXX_err_t W25QXX_read(W25QXX_handle_t *w25qxx, uint32_t address, uint8_t *buf, uint32_t len)
+W25QXX_err_t W25QXX_read(W25QXX_dev_hdl_t *w25qxx, uint32_t address, uint8_t *buf, uint32_t len)
 {
     if (w25qxx_read(&w25qxx->w25qxx_hdl, address, buf, len) != 0) {
         return W25QXX_Err;
@@ -237,7 +237,7 @@ W25QXX_err_t W25QXX_read(W25QXX_handle_t *w25qxx, uint32_t address, uint8_t *buf
     return W25QXX_Ok;
 }
 
-W25QXX_err_t W25QXX_write(W25QXX_handle_t *w25qxx, uint32_t address, uint8_t *buf, uint32_t len)
+W25QXX_err_t W25QXX_write(W25QXX_dev_hdl_t *w25qxx, uint32_t address, uint8_t *buf, uint32_t len)
 {
     if (w25qxx_write(&w25qxx->w25qxx_hdl, address, buf, len) != 0) {
         return W25QXX_Err;
@@ -245,7 +245,7 @@ W25QXX_err_t W25QXX_write(W25QXX_handle_t *w25qxx, uint32_t address, uint8_t *bu
     return W25QXX_Ok;
 }
 
-W25QXX_err_t W25QXX_erase(W25QXX_handle_t *w25qxx, uint32_t address, uint32_t len)
+W25QXX_err_t W25QXX_erase(W25QXX_dev_hdl_t *w25qxx, uint32_t address, uint32_t len)
 {
     W25QXX_err_t rc;
 
@@ -273,7 +273,7 @@ W25QXX_err_t W25QXX_erase(W25QXX_handle_t *w25qxx, uint32_t address, uint32_t le
 }
 
 
-W25QXX_err_t W25QXX_chip_erase(W25QXX_handle_t *w25qxx)
+W25QXX_err_t W25QXX_chip_erase(W25QXX_dev_hdl_t *w25qxx)
 {
     if (w25qxx_chip_erase(&w25qxx->w25qxx_hdl) != 0) {
         return W25QXX_Err;

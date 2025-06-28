@@ -99,7 +99,7 @@ static int block_device_sync(const struct lfs_config *c)
     return LFS_ERR_OK;
 }
 
-uint8_t FS_Init(W25QXX_handle_t *handle)
+uint8_t FS_Init(W25QXX_dev_hdl_t *handle)
 {
     // Save working copy of W25QXX handle w25_hdl_
     w25_hdl_ = &handle->w25qxx_hdl;

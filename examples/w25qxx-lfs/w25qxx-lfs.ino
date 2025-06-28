@@ -48,7 +48,7 @@ uint16_t SPI_CS_Pin;
 
 SPI_HandleTypeDef *hspi = nullptr;
 
-static W25QXX_handle_t W25QXX_hdl;        /**< W25QXX handle struct */
+static W25QXX_dev_hdl_t W25QXX_hdl;        /**< W25QXX handle struct */
 
 // the setup routine runs once when you press reset:
 void setup()
