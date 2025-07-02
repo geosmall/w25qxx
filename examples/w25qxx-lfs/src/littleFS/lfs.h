@@ -21,7 +21,7 @@ extern "C"
 // Software library version
 // Major (top-nibble), incremented on backwards incompatible changes
 // Minor (bottom-nibble), incremented on feature additions
-#define LFS_VERSION 0x0002000b
+#define LFS_VERSION 0x00020009
 #define LFS_VERSION_MAJOR (0xffff & (LFS_VERSION >> 16))
 #define LFS_VERSION_MINOR (0xffff & (LFS_VERSION >>  0))
 
@@ -766,11 +766,7 @@ int lfs_fs_gc(lfs_t *lfs);
 // Grows the filesystem to a new size, updating the superblock with the new
 // block count.
 //
-// If LFS_SHRINKNONRELOCATING is defined, this function will also accept
-// block_counts smaller than the current configuration, after checking
-// that none of the blocks that are being removed are in use.
-// Note that littlefs's pseudorandom block allocation means that
-// this is very unlikely to work in the general case.
+// Note: This is irreversible.
 //
 // Returns a negative error code on failure.
 int lfs_fs_grow(lfs_t *lfs, lfs_size_t block_count);

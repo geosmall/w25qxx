@@ -11,7 +11,7 @@ w25qxx_type_t chip_type = W25Q128;
 */
 
 /** Uncomment to  erase W25QXX chip */
-// #define ERASE_CHIP
+#define ERASE_CHIP
 
 #define DBG(...)    Serial.printf(__VA_ARGS__)
 #define BLINK_FAST 50
