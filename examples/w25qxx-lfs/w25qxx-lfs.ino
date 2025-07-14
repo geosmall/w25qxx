@@ -1,6 +1,6 @@
 #include <SPI.h>
 #include "W25QXX.h"
-#include "fs.h"
+#include "filesys.h"
 
 w25qxx_interface_t interface = W25QXX_INTERFACE_SPI;
 w25qxx_type_t chip_type = W25Q128;
